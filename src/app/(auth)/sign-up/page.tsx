@@ -6,14 +6,14 @@ import { useEffect, useState } from "react"
 import { useDebounceCallback } from 'usehooks-ts'
 import { useForm } from "react-hook-form"
 import * as z from "zod"
-import { toast, useSonner } from "sonner"
-import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+// import { useRouter } from "next/navigation"
 import { signUpSchema } from "@/schemas/signUpSchema"
 import axios, { AxiosError } from 'axios'
 import { ApiResponse } from "@/types/ApiResponse"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Button } from "@react-email/components"
+import { Button } from "@/components/ui/button"
 import { Loader2 } from 'lucide-react'
 
 const SignUp = () => {
@@ -22,14 +22,13 @@ const SignUp = () => {
     const [isCheckingUsername, setIsCheckingUsername] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const debounced = useDebounceCallback(setUsername, 300);
-    const { toast } = useSonner();
-    const router = useRouter();
+    // const router = useRouter();
 
     //zod implementation
     const form = useForm<z.infer<typeof signUpSchema>>({
         resolver: zodResolver(signUpSchema),
         defaultValues: {
-            userName: '',
+            username: '',
             email: '',
             password: ''
         }
@@ -37,7 +36,7 @@ const SignUp = () => {
 
     useEffect(() => {
         const checkUsernameUnique = async () => {
-            if (!username) {
+            if (username) {
                 setIsCheckingUsername(true);
                 setUsernameMessage('');
                 try {
@@ -59,21 +58,16 @@ const SignUp = () => {
     const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
         setIsSubmitting(true)
         try {
+            console.log("Submitting data:", data);
             const res = await axios.post<ApiResponse>("/api/sign-up", data)
-            toast({
-                title: 'Success',
-                description: res.data.message
-            })
-            router.replace(`/verify/${username}`);
-            setIsSubmitting(false)
+            console.log("Sign-up response:", res.data);
+            toast.success(res.data.message)
         } catch (err) {
+            console.error("Sign-up error:", err);
             const axiosError = err as AxiosError<ApiResponse>;
             const errorMessage = axiosError.response?.data.message
-            toast({
-                title: 'Signup Failed',
-                description: errorMessage,
-                variant: "destructive",
-            })
+            toast.error(errorMessage)
+        } finally {
             setIsSubmitting(false);
         }
     }
@@ -90,7 +84,7 @@ const SignUp = () => {
                         <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
                             <FormField
                                 control={form.control}
-                                name="userName"
+                                name="username"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Username</FormLabel>
@@ -99,7 +93,7 @@ const SignUp = () => {
                                                 placeholder="Username"
                                                 {...field}
                                                 onChange={(e) => {
-                                                    field.onChange(e.target.value); // ✅ Pass value, not event
+                                                    field.onChange(e.target.value);
                                                     debounced(e.target.value);
                                                 }}
                                             />
@@ -148,18 +142,16 @@ const SignUp = () => {
                                     </FormItem>
                                 )}
                             />
-                            <Button style={
-                                {
-                                    padding: "9px"
-                                }
-                            } className="bg-black rounded-lg text-white" type="submit">
-                                {
-                                    isSubmitting ? (
-                                        <>
-                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
-                                        </>
-                                    ) : ("Signup")
-                                }
+                            <Button 
+                                className="w-full bg-black hover:bg-gray-800 text-white" 
+                                type="submit"
+                                disabled={isSubmitting}
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Please wait
+                                    </>
+                                ) : "Signup"}
                             </Button>
                         </form>
                     </Form>

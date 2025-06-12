@@ -22,7 +22,7 @@ export interface User extends Document{
     username: string,
     email: string,
     password: string,
-    veriyfiedCode: string,
+    verifiedCode: string,
     expiry: Date,
     isVerified: boolean,
     isAcceptingMessage: boolean,
@@ -38,21 +38,21 @@ const UserSchema: Schema<User> = new Schema({
     },
     email:{
         type: String,
-        required: [true, "Username is required"],
+        required: [true, "Email is required"],
         unique: true,
-        match: [/^[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}$/ , "Please use a valid email adress"]
+        match: [/^[\w.-]+@[\w.-]+\.[a-zA-Z]{2,}$/ , "Please use a valid email address"]
     },
     password:{
         type: String,
         required: [true, "Password is required"],
     },
-    veriyfiedCode:{
+    verifiedCode:{
         type: String,
-        required: [true, "Verify Code is required"],
+        required: [true, "Verification code is required"],
     },
     expiry: {
         type: Date,
-        required: [true, "Expiry feild should be filled"]
+        required: [true, "Expiry field should be filled"]
     },
     isVerified: {
         type: Boolean,
