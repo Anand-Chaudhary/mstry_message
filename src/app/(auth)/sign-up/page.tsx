@@ -58,9 +58,7 @@ const SignUp = () => {
     const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
         setIsSubmitting(true)
         try {
-            console.log("Submitting data:", data);
             const res = await axios.post<ApiResponse>("/api/sign-up", data)
-            console.log("Sign-up response:", res.data);
             toast.success(res.data.message)
         } catch (err) {
             console.error("Sign-up error:", err);
@@ -102,7 +100,7 @@ const SignUp = () => {
                                             isCheckingUsername && <Loader2 className="animate-spin" />
                                         }
                                         <p className={`text-sm ${usernameMessage === "Username valid" ? `text-green-500`: `text-red-500`}`}>
-                                            test {username} is {usernameMessage}
+                                            {usernameMessage}
                                         </p>
                                         <FormMessage />
                                     </FormItem>
