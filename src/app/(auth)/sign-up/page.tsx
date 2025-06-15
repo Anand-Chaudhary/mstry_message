@@ -7,7 +7,7 @@ import { useDebounceCallback } from 'usehooks-ts'
 import { useForm } from "react-hook-form"
 import * as z from "zod"
 import { toast } from "sonner"
-// import { useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { signUpSchema } from "@/schemas/signUpSchema"
 import axios, { AxiosError } from 'axios'
 import { ApiResponse } from "@/types/ApiResponse"
@@ -22,7 +22,7 @@ const SignUp = () => {
     const [isCheckingUsername, setIsCheckingUsername] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const debounced = useDebounceCallback(setUsername, 300);
-    // const router = useRouter();
+    const router = useRouter();
 
     //zod implementation
     const form = useForm<z.infer<typeof signUpSchema>>({
@@ -42,8 +42,7 @@ const SignUp = () => {
                 try {
                     const res = await axios.get(`/api/checkUsername?username=${username}`)
                     console.log(res.data.message);
-                    
-                    setUsernameMessage(res.data.message)
+                    setUsernameMessage(res.data.message);
                 } catch (err) {
                     const axiosError = err as AxiosError<ApiResponse>;
                     setUsernameMessage(axiosError.response?.data.message ?? "Error Checking Username")
@@ -60,6 +59,7 @@ const SignUp = () => {
         try {
             const res = await axios.post<ApiResponse>("/api/sign-up", data)
             toast.success(res.data.message)
+            router.push('/verify')
         } catch (err) {
             console.error("Sign-up error:", err);
             const axiosError = err as AxiosError<ApiResponse>;

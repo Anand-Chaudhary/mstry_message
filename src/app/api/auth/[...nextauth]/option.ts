@@ -13,6 +13,7 @@ export const authOptions: NextAuthOptions = {
                 email: { label: "Email", type: "text", placeholder: "example@gmail.com" },
                 password: { label: "Password", type: "password" }
             },
+            //eslint-disable-next-line
             async authorize(credentials: any): Promise<any> {
                 await dbConnect()
                 try {
@@ -37,7 +38,7 @@ export const authOptions: NextAuthOptions = {
                     } else {
                         throw new Error("Incorrect Password")
                     }
-
+                    //eslint-disable-next-line
                 } catch (err: any) {
                     throw new Error(err)
                 }
@@ -53,7 +54,7 @@ export const authOptions: NextAuthOptions = {
     secret: process.env.NEXTAUTH_SECRET,
     callbacks: {
         async session({ session, token }) {
-            if(token){
+            if (token) {
                 session.user._id = token.__id?.toString()
                 session.user.isVerified = token.isVerified
                 session.user.isAcceptingMessages = token.isAcceptingMessages
@@ -62,7 +63,7 @@ export const authOptions: NextAuthOptions = {
             return session
         },
         async jwt({ token, user }) {
-            if(user){
+            if (user) {
                 token._id = user._id?.toString()
                 token.isVerified = user.isVerified
                 token.isAcceptingMessages = user.isAcceptingMessages
