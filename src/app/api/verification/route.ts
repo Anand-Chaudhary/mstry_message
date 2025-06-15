@@ -16,7 +16,7 @@ export async function POST(request:Request) {
                 message: "User not found"
             }, {status: 500})
         }
-        const isCodeValid = user.veriyfiedCode === verificationCode;
+        const isCodeValid = user.verifiedCode === verificationCode;
         const isCodeNotExpired = new Date(user.expiry) > new Date()
         if(isCodeValid && isCodeNotExpired){
             user.isVerified = true;
